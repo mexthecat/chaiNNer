@@ -10,25 +10,20 @@ from json import dumps as stringify
 from json import loads as json_parse
 from typing import Final
 
+import api
 import psutil
+from custom_types import UpdateProgressFn
+from dependencies.store import (DependencyInfo, filter_necessary_to_install,
+                                install_dependencies, installed_packages,
+                                uninstall_dependencies)
+from events import EventQueue
+from gpu import nvidia
+from response import error_response, success_response
 from sanic import Sanic
 from sanic.log import access_logger, logger
 from sanic.request import Request
 from sanic.response import json
 from sanic_cors import CORS
-
-import api
-from custom_types import UpdateProgressFn
-from dependencies.store import (
-    DependencyInfo,
-    filter_necessary_to_install,
-    install_dependencies,
-    installed_packages,
-    uninstall_dependencies,
-)
-from events import EventQueue
-from gpu import nvidia
-from response import error_response, success_response
 from server_config import ServerConfig
 from server_process_helper import WorkerServer
 
@@ -527,7 +522,7 @@ async def after_server_start(sanic_app: Sanic, loop: asyncio.AbstractEventLoop):
 
 def main():
     config = AppContext.get(app).config
-    app.run(port=config.port, single_process=True)
+    app.run(host=config.host, port=config.port, single_process=True)
 
 
 if __name__ == "__main__":

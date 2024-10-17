@@ -46,6 +46,13 @@ class ServerConfig:
     Usage: `--trace`
     """
 
+    host: str | None
+    """
+    Address to host the server on.
+
+    Usage: `--host 0.0.0.0`
+    """
+
     @staticmethod
     def parse_argv() -> ServerConfig:
         parser = argparse.ArgumentParser(description="ChaiNNer's server.")
@@ -81,6 +88,12 @@ class ServerConfig:
             action="store_true",
             help="Enable tracing using VizTracer.",
         )
+        parser.add_argument(
+            "--host",
+            type=str,
+            help="Address to host the server on.",
+            default='127.0.0.1',
+        )
 
         parsed = parser.parse_args()
 
@@ -91,4 +104,5 @@ class ServerConfig:
             error_on_failed_node=parsed.error_on_failed_node,
             storage_dir=parsed.storage_dir or None,
             trace=parsed.trace,
+            host=parsed.host,
         )
