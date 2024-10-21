@@ -14,19 +14,8 @@ from json import dumps as stringify
 from pathlib import Path
 from typing import Final, TypedDict
 
-from sanic import Sanic
-from sanic.log import access_logger, logger
-from sanic.request import Request
-from sanic.response import json
-from sanic_cors import CORS
-
 import api
-from api import (
-    ExecutionOptions,
-    Group,
-    JsonExecutionOptions,
-    NodeId,
-)
+from api import ExecutionOptions, Group, JsonExecutionOptions, NodeId
 from chain.cache import OutputCache
 from chain.chain import Chain, FunctionNode, GeneratorNode
 from chain.json import JsonNode, parse_json
@@ -35,12 +24,13 @@ from dependencies.store import installed_packages
 from events import EventConsumer, EventQueue, ExecutionErrorData
 from process import ExecutionId, Executor, NodeExecutionError, NodeOutput
 from progress_controller import Aborted
-from response import (
-    already_running_response,
-    error_response,
-    no_executor_response,
-    success_response,
-)
+from response import (already_running_response, error_response,
+                      no_executor_response, success_response)
+from sanic import Sanic
+from sanic.log import access_logger, logger
+from sanic.request import Request
+from sanic.response import json
+from sanic_cors import CORS
 from server_config import ServerConfig
 
 
@@ -639,7 +629,7 @@ async def after_server_start(sanic_app: Sanic, loop: asyncio.AbstractEventLoop):
 
 def main():
     config = AppContext.get(app).config
-    app.run(port=config.port, single_process=True)
+    app.run(host=config.host, port=config.port, single_process=True)
     if exit_code != 0:
         sys.exit(exit_code)
 

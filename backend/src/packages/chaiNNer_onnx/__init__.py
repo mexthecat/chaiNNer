@@ -1,7 +1,8 @@
-from sanic.log import logger
+import os
 
 from api import KB, MB, Dependency, add_package
 from gpu import nvidia
+from sanic.log import logger
 from system import is_arm_mac
 
 general = "ONNX uses .onnx models to upscale images."
@@ -19,7 +20,7 @@ else:
 
 
 def get_onnx_runtime():
-    if nvidia.is_available:
+    if nvidia.is_available or os.getenv('FORCE_GPU'):
         return Dependency(
             display_name="ONNX Runtime (GPU)",
             pypi_name="onnxruntime-gpu",

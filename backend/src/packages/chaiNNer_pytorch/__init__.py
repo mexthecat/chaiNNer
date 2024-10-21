@@ -1,9 +1,8 @@
 import os
 
-from sanic.log import logger
-
 from api import GB, KB, MB, Dependency, add_package
 from gpu import nvidia
+from sanic.log import logger
 from system import is_arm_mac
 
 general = "PyTorch uses .pth models to upscale images."
@@ -46,11 +45,11 @@ def get_pytorch():
             Dependency(
                 display_name="PyTorch",
                 pypi_name="torch",
-                version="2.1.2+cu121" if nvidia.is_available else "2.1.2",
-                size_estimate=2 * GB if nvidia.is_available else 140 * MB,
+                version="2.1.2+cu121" if nvidia.is_available or os.getenv('FORCE_GPU') else "2.1.2",
+                size_estimate=2 * GB if nvidia.is_available or os.getenv('FORCE_GPU') else 140 * MB,
                 extra_index_url=(
                     "https://download.pytorch.org/whl/cu121"
-                    if nvidia.is_available
+                    if nvidia.is_available or os.getenv('FORCE_GPU')
                     else "https://download.pytorch.org/whl/cpu"
                 ),
                 auto_update=False,
@@ -58,11 +57,11 @@ def get_pytorch():
             Dependency(
                 display_name="TorchVision",
                 pypi_name="torchvision",
-                version="0.16.2+cu121" if nvidia.is_available else "0.16.2",
-                size_estimate=2 * MB if nvidia.is_available else 800 * KB,
+                version="0.16.2+cu121" if nvidia.is_available or os.getenv('FORCE_GPU') else "0.16.2",
+                size_estimate=2 * MB if nvidia.is_available or os.getenv('FORCE_GPU') else 800 * KB,
                 extra_index_url=(
                     "https://download.pytorch.org/whl/cu121"
-                    if nvidia.is_available
+                    if nvidia.is_available or os.getenv('FORCE_GPU')
                     else "https://download.pytorch.org/whl/cpu"
                 ),
                 auto_update=False,
